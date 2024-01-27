@@ -53,11 +53,17 @@ Throughout this guide, we will give a deep dive into the fundamental aspects wri
   ```
   
   The `SocialMedia` contract facilitates interactions on the decentralized social media platform. It stores user information, posts, and comments.
+  
   The `User` struct represents registered users on the platform, containing fields for username, address, and registration status.
+  
   The `Post` struct stores information about each post, including the author's address, content, timestamp, number of likes, and an array of comments.
+  
   The `Comment` struct represents individual comments, containing fields for the commenter's address, content, and timestamp.
+  
   The `postComments` mapping is used to store comments for each post where the first key is the post's index, and the second key is the comment's index.
+  
   The `postCommentsCount` mapping keeps track of the number of comments for each post.
+  
   The `posts` array stores instances of the Post struct, representing individual posts on the decentralized social media platform.
   
 ### Description of events and modifiers
@@ -80,23 +86,32 @@ the address of the user who liked the post (`liker`) and the index of the liked 
 ```solidity
     event CommentAdded(address indexed commenter, uint256 indexed postId, string content, uint256 timestamp);
 ```
+This event is emitted when a user adds a comment to a post on the platform returns the address of the commenter (commenter), the index of the post being commented on (postId), the content of the comment (content), and the timestamp of comment creation (`timestamp`).
 
+```solidity
     modifier onlyRegisteredUser() {
         require(users[msg.sender].isRegistered, "User is not registered");
         _;
     }
+```
+This modifier restricts access to functions to only registered users on the platform and ensures that only users who have completed the registration process can perform certain actions, such as creating posts or adding comments.
+If an unregistered user attempts to call a function with this modifier, the transaction will be reverted with an error message indicating that the user is not registered.
 
+```solidity
     modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can call this function");
         _;
     }
+```
+This modifier restricts access to functions to the contract owner. It grants special privileges to the contract owner, such as administrative functions or contract upgrades.
+If a caller who is not the contract owner attempts to call a function with this modifier, the transaction will be reverted with an error message indicating that only the owner can call the function.
 
+```solidity
     constructor() {
         owner = msg.sender;
     }
-
-
 ```
+Constructor is a special function that is executed only once during contract deployment. In this contract, the constructor initializes the contract owner to the address of the deployer (`msg.sender`).
 
 ## User Registration
    - Implementation details of user registration functionality
