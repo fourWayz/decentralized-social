@@ -155,13 +155,79 @@ Constructor is a special function that is executed only once during contract dep
    This function ensures that registered users can create posts with non-empty content and provides transparency by emitting an event upon successful post creation. Additionally, it enforces security by restricting access to registered users only.
 
 ## Interacting with Posts
-   - Liking posts
-   - Adding comments to posts
-   - Explanation of the `likePost` and `addComment` functions
+  ### Liking posts
+  ```solidity
+ function likePost(uint256 _postId) external onlyRegisteredUser {
+        require(_postId < posts.length, "Post does not exist");
+
+        Post storage post = posts[_postId];
+        post.likes++;
+
+        emit PostLiked(msg.sender, _postId);
+    }
+  ```
+  ### Explanation of `likePost`
+  This function ensures that registered users can like posts and emit an event upon successful post like. Also, 
+  it enforces security by restricting access to registered users only and ensuring that the specified post exists before allowing a like action.
+  
+  ### Adding comments to posts
+  ```soliidity
+     function addComment(uint256 _postId, string memory _content) external onlyRegisteredUser {
+        require(_postId < posts.length, "Post does not exist");
+        require(bytes(_content).length > 0, "Comment should not be empty");
+
+        uint256 commentId = postCommentsCount[_postId];
+        postComments[_postId][commentId] = Comment({
+            commenter: msg.sender,
+            content: _content,
+            timestamp: block.timestamp
+        });
+
+        postCommentsCount[_postId]++;
+        posts[_postId].commentsCount++;
+
+        emit CommentAdded(msg.sender, _postId, _content, block.timestamp);
+    }
+  ```
+### Explanation of `addComment` functions
+  This function ensures that registered users can add comments to posts and emit an event upon successful comment addition. 
+  Also, it enforces security by restricting access to registered users only and ensuring that the specified post exists before allowing a comment action.
 
 ## Viewing Posts and Comments
-   - Retrieving posts and comments
-   - Explanation of the `getPost` and `getComment` functions
+  ### Retrieving post
+  ```solidity
+   function getPost(uint256 _postId) external view returns (
+        address author,
+        string memory content,
+        uint256 timestamp,
+        uint256 likes,
+        uint256 commentsCount
+    ) {
+        require(_postId < posts.length, "Post does not exist");
+        Post memory post = posts[_postId];
+        return (post.author, post.content, post.timestamp, post.likes, post.commentsCount);
+    }
+  ```
+### Explanation of the `getPost` function
+This function provides a convenient way for users to retrieve essential information about posts on the platform. It verifies that the specified post exists before returning its information.
+
+### Retrieving comments
+```solidity
+function getComment(uint256 _postId, uint256 _commentId) external view returns (
+        address commenter,
+        string memory content,
+        uint256 timestamp
+    ) {
+        require(_postId < posts.length, "Post does not exist");
+        require(_commentId < postCommentsCount[_postId], "Comment does not exist");
+
+        Comment memory comment = postComments[_postId][_commentId];
+        return (comment.commenter, comment.content, comment.timestamp);
+    }
+```
+
+### Explanation of the `getComment` function
+This function provides an easy way for users to retrieve essential information about comments on posts. It enforces security by verifying that both the specified post and comment exist before returning the comment's information.
 
 ## Setting up Remix for CELO Alfajores
    - Introduction to Remix IDE
