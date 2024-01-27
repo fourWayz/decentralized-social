@@ -18,9 +18,9 @@
 
   
 ## Introduction
-In this article, you will learn how to develop a decentralized social media platform. Leveraging the power of most powerful smart contracts language, Solidity and the user-friendly Remix IDE, we will explore the process of developing, and deploying this blockchain-based social media ecosystem. 
+In this article, you will learn how to develop a decentralized social media platform. Leveraging the power of the most powerful smart contracts language, Solidity, and the user-friendly Remix IDE, we will explore the process of developing and deploying this blockchain-based social media ecosystem. 
 
-Throughout this guide, we will give a deep dive into the fundamental aspects writing smart contract. We will handle user registration, post creation, interaction mechanisms such as liking and commenting, and finally, setting up Remix for deployment on the CELO Alfajores network.
+Throughout this guide, we will give a deep dive into the fundamental aspects of writing smart contracts. We will handle user registration, post creation, interaction mechanisms such as liking and commenting, and finally, setting up Remix for deployment on the CELO Alfajores network.
 
 ## Smart Contract Design
 
@@ -82,7 +82,7 @@ This event is emitted when a new user is successfully registered on the platform
 ```solidity
     event PostCreated(address indexed author, string content, uint256 timestamp);
 ```
-This event is emitted when a new post is created by a user on the platform. It return the address of the post's author (`author`), the content of the post (`content`), and the timestamp of creation (`timestamp`).
+This event is emitted when a new post is created by a user on the platform. It returns the address of the post's author (`author`), the content of the post (`content`), and the timestamp of creation (`timestamp`).
 
 ```solidity
     event PostLiked(address indexed liker, uint256 indexed postId);
@@ -93,7 +93,7 @@ the address of the user who liked the post (`liker`) and the index of the liked 
 ```solidity
     event CommentAdded(address indexed commenter, uint256 indexed postId, string content, uint256 timestamp);
 ```
-This event is emitted when a user adds a comment to a post on the platform returns the address of the commenter (commenter), the index of the post being commented on (postId), the content of the comment (content), and the timestamp of comment creation (`timestamp`).
+This event is emitted when a user adds a comment to a post on the platform and returns the address of the commenter (commenter), the index of the post being commented on (postId), the content of the comment (content), and the timestamp of comment creation (`timestamp`).
 
 ```solidity
     modifier onlyRegisteredUser() {
@@ -412,17 +412,9 @@ Before you proceed, ensure you have connected Metamask or the provider you are u
 
 Next, select `injected provider ` under your environments to connect to Metamask and click on `deploy` button. 
 
-Upon successful deploymment of your contract, your interface should look like below :
+Upon successful deployment of your contract, your interface should look like below :
 
 ![f-deployed](https://github.com/fourWayz/decentralized-social/assets/157867069/a4a90af2-d10b-4903-a4bb-0a6a7094e6ff)
 
-Congratulations! You have succefully written a decentralized social media platform smart contract and deployed it to CELO on Remix
+Congratulations! You have successfully written a decentralized social media platform smart contract and deployed it to CELO on Remix
 
-
-
-
-   
-
-## Conclusion
-   - Summary of key points covered in the article
-   - Final thoughts on deploying decentralized applications on CELO Alfajores using Remix
