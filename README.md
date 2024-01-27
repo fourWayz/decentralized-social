@@ -54,13 +54,49 @@ Throughout this guide, we will give a deep dive into the fundamental aspects wri
   
   The `SocialMedia` contract facilitates interactions on the decentralized social media platform. It stores user information, posts, and comments.
   The `User` struct represents registered users on the platform, containing fields for username, address, and registration status.
-  The `Post` struct encapsulates information about each post, including the author's address, content, timestamp, number of likes, and an array of comments.
+  The `Post` struct stores information about each post, including the author's address, content, timestamp, number of likes, and an array of comments.
   The `Comment` struct represents individual comments, containing fields for the commenter's address, content, and timestamp.
   The `postComments` mapping is used to store comments for each post where the first key is the post's index, and the second key is the comment's index.
   The `postCommentsCount` mapping keeps track of the number of comments for each post.
   The `posts` array stores instances of the Post struct, representing individual posts on the decentralized social media platform.
   
 ### Description of events and modifiers
+```solidity
+    event UserRegistered(address indexed userAddress, string username);
+```
+This event is emitted when a new user is successfully registered on the platform. It returns the registered user's address (`userAddress`) and the chosen username (`username`).
+
+```solidity
+    event PostCreated(address indexed author, string content, uint256 timestamp);
+```
+This event is emitted when a new post is created by a user on the platform. It return the address of the post's author (`author`), the content of the post (`content`), and the timestamp of creation (`timestamp`).
+
+```solidity
+    event PostLiked(address indexed liker, uint256 indexed postId);
+```
+This event is emitted when a user likes a post on the platform. It provides visibility into user engagement and returns
+the address of the user who liked the post (`liker`) and the index of the liked post (`postId`).
+
+```solidity
+    event CommentAdded(address indexed commenter, uint256 indexed postId, string content, uint256 timestamp);
+```
+
+    modifier onlyRegisteredUser() {
+        require(users[msg.sender].isRegistered, "User is not registered");
+        _;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can call this function");
+        _;
+    }
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+
+```
 
 ## User Registration
    - Implementation details of user registration functionality
