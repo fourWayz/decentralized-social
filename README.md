@@ -12,6 +12,12 @@
 8. [Setting up Remix for CELO Alfajores](#setting-up-remix-for-celo-alfajores)
 9. [Conclusion](#conclusion)
 
+## Prerequisites
+- Basic understanding of Solidity programming language
+- Celo testnet faucet [faucet](https://faucet.celo.org/alfajores)
+- Access to Remix IDE [Remix](https://remix.ethereum.org)
+
+  
 ## Introduction
 In this article, you will learn how to develop a decentralized social media platform. Leveraging the power of most powerful smart contracts language, Solidity and the user-friendly Remix IDE, we will explore the process of developing, and deploying this blockchain-based social media ecosystem. 
 
@@ -380,7 +386,10 @@ contract SocialMedia {
 
 ```
 ## Setting up Remix for CELO Alfajores
-   - Introduction to Remix IDE
+  Go your web your browser and  open [remix IDE](https://remix.ethereum.org). You should see a similar interface like below :
+  ![f-remix](https://github.com/fourWayz/decentralized-social/assets/157867069/ce46c1b2-5f84-4f26-b0fb-1bac53640f22)
+
+  
    - Connecting Remix to the CELO Alfajores network
    - Deploying smart contracts on CELO Alfajores using Remix
 
