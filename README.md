@@ -20,37 +20,37 @@ Throughout this guide, we will give a deep dive into the fundamental aspects wri
 
   ### Explanation of data structures (User, Post, Comment)
           
-      ```solidity
+  ```solidity
      contract SocialMedia {
-      
-     address public owner;
-    struct User {
-        string username;
-        address userAddress;
-        bool isRegistered;
-    }
 
-    mapping(address => User) public users;
-
-    struct Post {
-        address author;
-        string content;
-        uint256 timestamp;
-        uint256 likes;
-        uint256 commentsCount;
-    }
-
-    struct Comment {
-        address commenter;
-        string content;
-        uint256 timestamp;
-    }
-
-    mapping(uint256 => mapping(uint256 => Comment)) public postComments;
-    mapping(uint256 => uint256) public postCommentsCount;
-
-    Post[] public posts;  
-    ```
+      address public owner;
+      struct User {
+          string username;
+          address userAddress;
+          bool isRegistered;
+      }
+  
+      mapping(address => User) public users;
+  
+      struct Post {
+          address author;
+          string content;
+          uint256 timestamp;
+          uint256 likes;
+          uint256 commentsCount;
+      }
+  
+      struct Comment {
+          address commenter;
+          string content;
+          uint256 timestamp;
+      }
+  
+      mapping(uint256 => mapping(uint256 => Comment)) public postComments;
+      mapping(uint256 => uint256) public postCommentsCount;
+  
+      Post[] public posts;  
+  ```
   
   The `SocialMedia` contract facilitates interactions on the decentralized social media platform. It stores user information, posts, and comments.
   The `User` struct represents registered users on the platform, containing fields for username, address, and registration status.
