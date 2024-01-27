@@ -10,7 +10,6 @@
 6. [Viewing Posts and Comments](#viewing-posts-and-comments)
 7. [Complete Code](#complete-code)
 8. [Setting up Remix for CELO Alfajores](#setting-up-remix-for-celo-alfajores)
-9. [Conclusion](#conclusion)
 
 ## Prerequisites
 - Basic understanding of Solidity programming language
@@ -251,7 +250,7 @@ This is the complete code for this decentralized social contract.
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 
 contract SocialMedia {
     address public owner;
@@ -386,12 +385,43 @@ contract SocialMedia {
 
 ```
 ## Setting up Remix for CELO Alfajores
-  Go your web your browser and  open [remix IDE](https://remix.ethereum.org). You should see a similar interface like below :
-  ![f-remix](https://github.com/fourWayz/decentralized-social/assets/157867069/ce46c1b2-5f84-4f26-b0fb-1bac53640f22)
-
   
-   - Connecting Remix to the CELO Alfajores network
-   - Deploying smart contracts on CELO Alfajores using Remix
+  ### Open Remix IDE and paste code
+  Go to your web browser and open [remix IDE](https://remix.ethereum.org). You should see a similar interface like below :
+  
+  ![f-remix](https://github.com/fourWayz/decentralized-social/assets/157867069/ce46c1b2-5f84-4f26-b0fb-1bac53640f22)
+  
+  Click on `contracts` folder and create a new file named `Social.sol` then paste the full code in the file.
+  
+![f-remix-code](https://github.com/fourWayz/decentralized-social/assets/157867069/e6ae3c60-9207-4c43-bc56-d848f4f2a661)
+
+### Compile and deploy
+On the left tab, click on `compile` icon.
+![f-remix-code-1](https://github.com/fourWayz/decentralized-social/assets/157867069/a44e20e4-6dbb-4a9d-a5d0-9cb726fdda19)
+
+Next, click on `compile Social.sol` to compile your contract.
+![f-compile](https://github.com/fourWayz/decentralized-social/assets/157867069/1b408f4f-3e06-41ec-b107-93ba1bb0aae6)
+
+Upon successful compilation of your contracts, you should see a green checkmark like below :
+![f-compiled](https://github.com/fourWayz/decentralized-social/assets/157867069/a3ff4f17-6fd8-462d-9a79-3cc6a74425d8)
+
+Now, proceed to deploy your contract by clicking on `deploy and run transactions` icon on the left side bar.
+![f-deploy](https://github.com/fourWayz/decentralized-social/assets/157867069/60a7c45d-2f76-4846-ae7b-785a55f9f80d)
+
+Before you proceed, ensure you have connected Metamask or the provider you are using to CELO alfajores. You can follow this [guide](https://medium.com/defi-for-the-people/how-to-set-up-metamask-with-celo-912d698fcafe) to connect CELO to Metamask.
+
+Next, select `injected provider ` under your environments to connect to Metamask and click on `deploy` button. 
+
+Upon successful deploymment of your contract, your interface should look like below :
+
+![f-deployed](https://github.com/fourWayz/decentralized-social/assets/157867069/a4a90af2-d10b-4903-a4bb-0a6a7094e6ff)
+
+Congratulations! You have succefully written a decentralized social media platform smart contract and deployed it to CELO on Remix
+
+
+
+
+   
 
 ## Conclusion
    - Summary of key points covered in the article
