@@ -178,7 +178,7 @@ Constructor is a special function that is executed only once during contract dep
   it enforces security by restricting access to registered users only and ensuring that the specified post exists before allowing a like action.
   
   ### Adding comments to posts
-  ```soliidity
+  ```solidity
      function addComment(uint256 _postId, string memory _content) external onlyRegisteredUser {
         require(_postId < posts.length, "Post does not exist");
         require(bytes(_content).length > 0, "Comment should not be empty");
