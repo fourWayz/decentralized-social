@@ -114,12 +114,45 @@ If a caller who is not the contract owner attempts to call a function with this 
 Constructor is a special function that is executed only once during contract deployment. In this contract, the constructor initializes the contract owner to the address of the deployer (`msg.sender`).
 
 ## User Registration
-   - Implementation details of user registration functionality
-   - Explanation of the `registerUser` function
+   ### Implementation details of user registration functionality
+   ```solidity
+      function registerUser(string memory _username) external {
+        require(!users[msg.sender].isRegistered, "User is already registered");
+        require(bytes(_username).length > 0, "Username should not be empty");
+
+        users[msg.sender] = User({
+            username: _username,
+            userAddress: msg.sender,
+            isRegistered: true
+        });
+
+        emit UserRegistered(msg.sender, _username);
+    }
+   ```
+
+   ### Explanation of the `registerUser` function
+   This function ensures that users can register on the platform with a unique username and provides transparency by emitting an event upon successful registration. 
+   Additionally, it enforces security by verifying that the user is not already registered and that the provided username is not empty.
 
 ## Creating Posts
-   - Implementation details of creating posts
-   - Description of the `createPost` function
+   ### Implementation details of creating posts
+   ```solidity
+        function createPost(string memory _content) external onlyRegisteredUser {
+        require(bytes(_content).length > 0, "Content should not be empty");
+
+        posts.push(Post({
+            author: msg.sender,
+            content: _content,
+            timestamp: block.timestamp,
+            likes: 0,
+            commentsCount: 0
+        }));
+
+        emit PostCreated(msg.sender, _content, block.timestamp);
+    }
+   ```
+   ### Description of the `createPost` function
+   This function ensures that registered users can create posts with non-empty content and provides transparency by emitting an event upon successful post creation. Additionally, it enforces security by restricting access to registered users only.
 
 ## Interacting with Posts
    - Liking posts
