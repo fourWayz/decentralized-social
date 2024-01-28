@@ -253,16 +253,19 @@ This is the complete code for this decentralized social contract.
 pragma solidity 0.8.0;
 
 contract SocialMedia {
-    address public owner;
+    address private owner;
 
+    // Struct to store user information
     struct User {
-        string username;
+        bytes32 username;
         address userAddress;
         bool isRegistered;
     }
 
+    // Mapping to track users by their address
     mapping(address => User) public users;
 
+    // Struct to represent a post
     struct Post {
         address author;
         string content;
@@ -271,39 +274,52 @@ contract SocialMedia {
         uint256 commentsCount;
     }
 
+    // Struct to represent a comment
     struct Comment {
         address commenter;
         string content;
         uint256 timestamp;
     }
 
-    mapping(uint256 => mapping(uint256 => Comment)) public postComments;
-    mapping(uint256 => uint256) public postCommentsCount;
+    // Mapping to store comments associated with each post
+    mapping(uint256 => mapping(uint256 => Comment)) private postComments;
+    mapping(uint256 => uint256) private postCommentsCount;
 
-    Post[] public posts;
+// Array to store all posts
+    Post[] private posts;
 
-    event UserRegistered(address indexed userAddress, string username);
+    // Events for user registration, post creation, post liking, and comment addition
+    event UserRegistered(address indexed userAddress, bytes32 username);
     event PostCreated(address indexed author, string content, uint256 timestamp);
     event PostLiked(address indexed liker, uint256 indexed postId);
     event CommentAdded(address indexed commenter, uint256 indexed postId, string content, uint256 timestamp);
-
     modifier onlyRegisteredUser() {
         require(users[msg.sender].isRegistered, "User is not registered");
         _;
     }
 
+    // Modifier to allow only registered users to perform certain actions
+    modifier onlyRegisteredUser() {
+        require(users[msg.sender].isRegistered, "User is not registered");
+        _;
+    }
+
+    // Modifier to allow only the owner to perform certain administrative actions
     modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can call this function");
         _;
     }
 
+    // Contract constructor to set the contract owner
     constructor() {
         owner = msg.sender;
     }
 
-    function registerUser(string memory _username) external {
+    // Function for user registration
+    function registerUser(bytes32 _username) external {
         require(!users[msg.sender].isRegistered, "User is already registered");
-        require(bytes(_username).length > 0, "Username should not be empty");
+        require(_username != bytes32(0), "Username should not be empty");
+        require(usersByUserName[_username] == address(0), "Username already taken");
 
         users[msg.sender] = User({
             username: _username,
@@ -314,6 +330,7 @@ contract SocialMedia {
         emit UserRegistered(msg.sender, _username);
     }
 
+    // Function to create a new post
     function createPost(string memory _content) external onlyRegisteredUser {
         require(bytes(_content).length > 0, "Content should not be empty");
 
@@ -328,6 +345,7 @@ contract SocialMedia {
         emit PostCreated(msg.sender, _content, block.timestamp);
     }
 
+    // Function to like a post
     function likePost(uint256 _postId) external onlyRegisteredUser {
         require(_postId < posts.length, "Post does not exist");
 
@@ -337,6 +355,7 @@ contract SocialMedia {
         emit PostLiked(msg.sender, _postId);
     }
 
+    // Function to add a comment to a post
     function addComment(uint256 _postId, string memory _content) external onlyRegisteredUser {
         require(_postId < posts.length, "Post does not exist");
         require(bytes(_content).length > 0, "Comment should not be empty");
@@ -354,10 +373,12 @@ contract SocialMedia {
         emit CommentAdded(msg.sender, _postId, _content, block.timestamp);
     }
 
+    // Function to retrieve the total number of posts
     function getPostsCount() external view returns (uint256) {
         return posts.length;
     }
 
+    // Function to retrieve details of a specific post
     function getPost(uint256 _postId) external view returns (
         address author,
         string memory content,
@@ -370,6 +391,7 @@ contract SocialMedia {
         return (post.author, post.content, post.timestamp, post.likes, post.commentsCount);
     }
 
+    // Function to retrieve details of a specific comment
     function getComment(uint256 _postId, uint256 _commentId) external view returns (
         address commenter,
         string memory content,
@@ -380,6 +402,22 @@ contract SocialMedia {
 
         Comment memory comment = postComments[_postId][_commentId];
         return (comment.commenter, comment.content, comment.timestamp);
+    }
+
+    // Function to allow the author to edit their own post
+    function editPost(uint256 _postId, string memory _newContent) external onlyRegisteredUser {
+        require(_postId < posts.length, "Post does not exist");
+        require(msg.sender == posts[_postId].author, "You are not the author of this post");
+
+        posts[_postId].content = _newContent;
+    }
+   // Function to allow the commenter to edit their own comment
+    function editComment(uint256 _postId, uint256 _commentId, string memory _newContent) external onlyRegisteredUser {
+        require(_postId < posts.length, "Post does not exist");
+        require(_commentId < postCommentsCount[_postId], "Comment does not exist");
+        require(msg.sender == postComments[_postId][_commentId].commenter, "You are not the commenter of this comment");
+
+        postComments[_postId][_commentId].content = _newContent;
     }
 }
 
