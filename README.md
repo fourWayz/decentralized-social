@@ -257,7 +257,6 @@ contract SocialMedia {
 
     struct User {
         string username;
-        address userAddress;
         bool isRegistered;
     }
 
@@ -269,6 +268,7 @@ contract SocialMedia {
         uint256 timestamp;
         uint256 likes;
         uint256 commentsCount;
+        mapping(uint256 => Comment) comments; // Store comments in a mapping for efficient access
     }
 
     struct Comment {
@@ -276,9 +276,6 @@ contract SocialMedia {
         string content;
         uint256 timestamp;
     }
-
-    mapping(uint256 => mapping(uint256 => Comment)) public postComments;
-    mapping(uint256 => uint256) public postCommentsCount;
 
     Post[] public posts;
 
@@ -307,7 +304,6 @@ contract SocialMedia {
 
         users[msg.sender] = User({
             username: _username,
-            userAddress: msg.sender,
             isRegistered: true
         });
 
@@ -341,16 +337,16 @@ contract SocialMedia {
         require(_postId < posts.length, "Post does not exist");
         require(bytes(_content).length > 0, "Comment should not be empty");
 
-        uint256 commentId = postCommentsCount[_postId];
-        postComments[_postId][commentId] = Comment({
+        Post storage post = posts[_postId];
+        uint256 commentId = post.commentsCount;
+
+        post.comments[commentId] = Comment({
             commenter: msg.sender,
             content: _content,
             timestamp: block.timestamp
         });
 
-        postCommentsCount[_postId]++;
-        posts[_postId].commentsCount++;
-
+        post.commentsCount++;
         emit CommentAdded(msg.sender, _postId, _content, block.timestamp);
     }
 
@@ -376,9 +372,10 @@ contract SocialMedia {
         uint256 timestamp
     ) {
         require(_postId < posts.length, "Post does not exist");
-        require(_commentId < postCommentsCount[_postId], "Comment does not exist");
+        Post memory post = posts[_postId];
+        require(_commentId < post.commentsCount, "Comment does not exist");
 
-        Comment memory comment = postComments[_postId][_commentId];
+        Comment memory comment = post.comments[_commentId];
         return (comment.commenter, comment.content, comment.timestamp);
     }
 }
