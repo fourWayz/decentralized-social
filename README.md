@@ -61,6 +61,7 @@ Throughout this guide, we will give a deep dive into the fundamental aspects of 
   
   The `SocialMedia` contract facilitates interactions on the decentralized social media platform. It defines the structure for a social media platform where users can register, make posts, and comment on posts.
   It provides functionality to store user information, posts, and comments, and retrieve them as needed. Additionally, it includes variables and mappings to keep track of post comments and their counts.
+  
   The `owner` : An address variable to store the address of the owner of the contract.
   
   The `User` struct represents registered users on the platform, containing fields for username, address, and registration status.
