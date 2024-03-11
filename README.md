@@ -59,13 +59,16 @@ Throughout this guide, we will give a deep dive into the fundamental aspects of 
 }
   ```
   
-  The `SocialMedia` contract facilitates interactions on the decentralized social media platform. It stores user information, posts, and comments.
+  The `SocialMedia` contract facilitates interactions on the decentralized social media platform. It defines the structure for a social media platform where users can register, make posts, and comment on posts.
+  It provides functionality to store user information, posts, and comments, and retrieve them as needed. Additionally, it includes variables and mappings to keep track of post comments and their counts.
+  The `owner` : An address variable to store the address of the owner of the contract.
   
   The `User` struct represents registered users on the platform, containing fields for username, address, and registration status.
   
   The `Post` struct stores information about each post, including the author's address, content, timestamp, number of likes, and an array of comments.
+  It contains fields such as author (address of the author), content (the actual content of the post), timestamp (time when the post was made), likes (number of likes on the post), and commentsCount (number of comments on the post).
   
-  The `Comment` struct represents individual comments, containing fields for the commenter's address, content, and timestamp.
+  The `Comment` struct represents individual comments, containing fields for the commenter's address, content, and timestamp. It contains fields like commenter (address of the commenter), content (the actual content of the comment), and timestamp (time when the comment was made).
   
   The `postComments` mapping is used to store comments for each post where the first key is the post's index, and the second key is the comment's index.
   
@@ -138,8 +141,18 @@ Constructor is a special function that is executed only once during contract dep
    ```
 
    ### Explanation of the `registerUser` function
-   This function ensures that users can register on the platform with a unique username and provides transparency by emitting an event upon successful registration. 
+   This function is declared with the `registerUser` name, taking a single argument `_username` of type string which represents the username of the user registering. It is declared as `external`, meaning it can be called from outside the contract. It ensures that users can register on the platform with a unique username and provides transparency by emitting an event upon successful registration. 
    Additionally, it enforces security by verifying that the user is not already registered and that the provided username is not empty.
+   
+   - `require(!users[msg.sender].isRegistered, "User is already registered")` : This line ensures that the user calling the function (msg.sender) is not already 
+    registered. It checks if the `isRegistered` flag in the users mapping for the caller's address is false. If it's true, meaning the user is already registered, 
+    it will revert the transaction with the error message "User is already registered".
+
+   - `require(bytes(_username).length > 0, "Username should not be empty")` : This line ensures that the `_username` parameter passed to the function is not empty. It checks if the length of the byte representation of the username is greater than 0. If it's not, it will revert the transaction with the error message "Username should not be empty".
+
+   - `users[msg.sender] = User({username: _username, userAddress: msg.sender, isRegistered: true})` : If the input validation passes, a new User struct is created and stored in the users mapping with the caller's address (msg.sender) as the key. The username field of the struct is set to the `_username` parameter passed to the function, the `userAddress` is set to `msg.sender`, and the `isRegistered` flag is set to true, indicating that the user is now registered. 
+
+  - `emit UserRegistered(msg.sender, _username)` : After successfully registering the user, an event `UserRegistered` is emitted. This allows external parties to listen for this event and take appropriate actions, such as updating UIs or performing additional logic.
 
 ## Creating Posts
    ### Implementation details of creating posts
@@ -161,6 +174,17 @@ Constructor is a special function that is executed only once during contract dep
    ### Description of the `createPost` function
    This function ensures that registered users can create posts with non-empty content and provides transparency by emitting an event upon successful post creation. Additionally, it enforces security by restricting access to registered users only.
 
+  - `onlyRegisteredUser`: This modifier ensures that only registered users can create posts. It's assumed to be defined elsewhere in the contract.
+  - `require(bytes(_content).length > 0, "Content should not be empty")`: Ensures that the content of the post is not empty. It checks the length of the 
+  - `_content` string and requires it to be greater than 0 bytes. 
+  - `posts.push(...)`: Adds a new post  to the `posts` array. It creates a new `Post` struct with the following parameters:
+    - `author`: The address of the user creating the post (`msg.sender`).
+    - `content`: The content of the post, provided as input to the function (`_content`).
+    - `timestamp`: The current block timestamp, indicating when the post was created (`block.timestamp`).
+    - `likes`: Initialized to 0, indicating the number of likes on the post.
+    - `commentsCount`: Initialized to 0, indicating the number of comments on the post.
+  - `emit PostCreated(msg.sender, _content, block.timestamp)`: Emits an event `PostCreated`, indicating that a new post has been created. It includes the address of the author (`msg.sender`), the content of the post (`_content`), and the timestamp when the post was created (`block.timestamp`).
+
 ## Interacting with Posts
   ### Liking posts
   ```solidity
@@ -176,6 +200,13 @@ Constructor is a special function that is executed only once during contract dep
   ### Explanation of `likePost`
   This function ensures that registered users can like posts and emit an event upon successful post like. Also, 
   it enforces security by restricting access to registered users only and ensuring that the specified post exists before allowing a like action.
+
+  - `onlyRegisteredUser`: This modifier ensures that only registered users can like posts. It's assumed to be defined elsewhere in the contract.  
+  - `require(_postId < posts.length, "Post does not exist")`: Checks if the provided `_postId` is within the range of existing posts. If the post does not exist  
+  (i.e., the `_postId` is out of range), it reverts the transaction with an error message.
+  - `Post storage post = posts[_postId];`: Retrieves the post from the `posts` array based on the provided `_postId` and stores it in a `Post` storage variable named `post`.
+  - `post.likes++;`: Increments the `likes` counter of the liked post by one.
+  - `emit PostLiked(msg.sender, _postId)`: Emits an event `PostLiked`, indicating that the user (`msg.sender`) has liked the post specified by `_postId`.
   
   ### Adding comments to posts
   ```solidity
@@ -199,6 +230,19 @@ Constructor is a special function that is executed only once during contract dep
 ### Explanation of `addComment` functions
   This function ensures that registered users can add comments to posts and emit an event upon successful comment addition. 
   Also, it enforces security by restricting access to registered users only and ensuring that the specified post exists before allowing a comment action.
+
+- `onlyRegisteredUser`: This modifier ensures that only registered users can add comments. It's assumed to be defined elsewhere in the contract.
+- `require(_postId < posts.length, "Post does not exist")`: Ensures that the provided `_postId` corresponds to an existing post in the `posts` array.
+- `require(bytes(_content).length > 0, "Comment should not be empty")`: Ensures that the content of the comment is not empty.
+- `uint256 commentId = postCommentsCount[_postId];`: Retrieves the next available comment ID for the given post.
+- `postComments[_postId][commentId] = Comment({ ... });`: Adds a new comment to the `postComments` mapping for the specified post ID and comment ID. It creates a new `Comment` struct with the following parameters:
+  - `commenter`: The address of the user adding the comment (`msg.sender`).
+  - `content`: The content of the comment, provided as input to the function (`_content`).
+  - `timestamp`: The current block timestamp, indicating when the comment was added (`block.timestamp`).
+- `postCommentsCount[_postId]++;`: Increments the count of comments for the specified post ID.
+- `posts[_postId].commentsCount++;`: Increments the comments count in the corresponding post struct.
+- `emit CommentAdded(msg.sender, _postId, _content, block.timestamp)`: Emits an event `CommentAdded`, indicating that a new comment has been added to a post. It includes the address of the commenter (`msg.sender`), the post ID (`_postId`), the content of the comment (`_content`), and the timestamp when the comment was added (`block.timestamp`).
+
 
 ## Viewing Posts and Comments
   ### Retrieving post
