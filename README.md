@@ -262,6 +262,17 @@ Constructor is a special function that is executed only once during contract dep
 ### Explanation of the `getPost` function
 This function provides a convenient way for users to retrieve essential information about posts on the platform. It verifies that the specified post exists before returning its information.
 
+- `_postId`: The index of the post to retrieve from the `posts` array.
+- `author`: The address of the author of the post.
+- `content`: The content of the post.
+- `timestamp`: The timestamp when the post was created.
+- `likes`: The number of likes on the post.
+- `commentsCount`: The number of comments on the post.
+- `require(_postId < posts.length, "Post does not exist")`: Ensures that the provided `_postId` corresponds to an existing post in the `posts` array.
+- `Post memory post = posts[_postId];`: Retrieves the post struct from the `posts` array at the specified index `_postId`.
+- `return (post.author, post.content, post.timestamp, post.likes, post.commentsCount);`: Returns the attributes of the post as a tuple containing the author's address, the content of the post, the timestamp, the number of likes, and the number of comments.
+
+
 ### Retrieving comments
 ```solidity
 function getComment(uint256 _postId, uint256 _commentId) external view returns (
@@ -279,6 +290,17 @@ function getComment(uint256 _postId, uint256 _commentId) external view returns (
 
 ### Explanation of the `getComment` function
 This function provides an easy way for users to retrieve essential information about comments on posts. It enforces security by verifying that both the specified post and comment exist before returning the comment's information.
+
+- `_postId`: The index of the post to which the comment belongs.
+- `_commentId`: The index of the comment within the specified post.
+- `commenter`: The address of the commenter.
+- `content`: The content of the comment.
+- `timestamp`: The timestamp when the comment was created.
+- `require(_postId < posts.length, "Post does not exist")`: Ensures that the provided `_postId` corresponds to an existing post in the `posts` array.
+- `require(_commentId < postCommentsCount[_postId], "Comment does not exist")`: Ensures that the provided `_commentId` corresponds to an existing comment for the given post.
+- `Comment memory comment = postComments[_postId][_commentId];`: Retrieves the comment struct from the `postComments` mapping for the specified post ID and comment ID.
+- `return (comment.commenter, comment.content, comment.timestamp);`: Returns the attributes of the comment as a tuple containing the commenter's address, the content of the comment, and the timestamp when it was created.
+
 
 ### Retrieving total posts count
 ```solidity
